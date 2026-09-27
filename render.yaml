@@ -21,7 +21,7 @@ services:
         value: "60"
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: fleet-telemetry-redis
           property: connectionString
       - key: MQTT_BROKER_HOST
@@ -51,12 +51,12 @@ services:
       - key: ROUTE_ALERT_RECIPIENT_EMAIL
         sync: false
 
-  - type: static
+  - type: web
     name: fleet-telemetry-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
-    plan: free
     envVars:
       - key: VITE_API_BASE_URL
         value: https://fleet-telemetry-api.onrender.com
@@ -65,9 +65,9 @@ services:
         source: /*
         destination: /index.html
 
-  - type: redis
+  - type: keyvalue
     name: fleet-telemetry-redis
-    plan: free
+    plan: 256mb
     ipAllowList: []
 
 databases:
